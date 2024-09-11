@@ -33,20 +33,20 @@ class DB:
         self.__session = None
         self._initialize_database()
         
-        def _initialize_database(self):
-            """
-            Initializes the database schema by creating all tables.
-            
-            In other to avoid overwritting production data this should be used
-            cautiously during testing. During testing production database should be
-            changed, or in memory database ":memory:" should be used.
-            """
-            try:
-                Base.metadata.create_all(self._engine)
-            except SQLAlchemyError as e:
-                # TODO: Error would be logged in using a custom logger
-                # Also full exception would be logged
-                print(f"Error initializing database schema: {e}")
+    def _initialize_database(self):
+        """
+        Initializes the database schema by creating all tables.
+        
+        In other to avoid overwritting production data this should be used
+        cautiously during testing. During testing production database should be
+        changed, or in memory database ":memory:" should be used.
+        """
+        try:
+            Base.metadata.create_all(self._engine)
+        except SQLAlchemyError as e:
+            # TODO: Error would be logged in using a custom logger
+            # Also full exception would be logged
+            print(f"Error initializing database schema: {e}")
         
     @property
     def _session(self) -> Session:
