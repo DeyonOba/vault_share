@@ -83,7 +83,7 @@ class DB:
             self._close_session()
         
     def _close_session(self):
-        """Closes the active session"""
+        """Closes the active session to prevent memory leaks."""
         if self.__session:
             self.__session.close()
             self.__session = None
