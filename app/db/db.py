@@ -80,6 +80,10 @@ class DB:
             print(f"Error adding user: {e}")
             return None
         finally:
-            # TODO: Close the session after transaction completion
-            pass
-    
+            self._close_session()
+        
+    def _close_session(self):
+        """Closes the active session"""
+        if self.__session:
+            self.__session.close()
+            self.__session = None
