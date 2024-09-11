@@ -9,7 +9,11 @@ from app.db.models import Base, User
 
 class DB:
     """
-    DB class
+    DB class provides methods for database interaction.
+    
+    Attributes:
+        _engine: SQLAlchemy engine object for database connection.
+        __session: Memoized session object for database transactions.
     """
     
     def __init__(self, database="app.db") -> None:
