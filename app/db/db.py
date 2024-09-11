@@ -69,8 +69,17 @@ class DB:
         Returns:
             User: The created User object.
         """
-        user = User(username=username, hashed_password=hashed_password)
-        self._session.add(user)
-        self._session.commit()
-        return user
+        try:
+            user = User(username=username, hashed_password=hashed_password)
+            self._session.add(user)
+            self._session.commit()
+            return user
+        except SQLAlchemyError as e:
+            self._session.rollback()
+            # TODO: Error would be logged using custom logger
+            print(f"Error adding user: {e}")
+            return None
+        finally:
+            # TODO: Close the session after transaction completion
+            pass
     
