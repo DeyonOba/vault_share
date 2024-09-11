@@ -1,5 +1,5 @@
 """
-DB module
+DB module for handling database interactions.
 """
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker
