@@ -1,10 +1,11 @@
 """
 DB module for handling database interactions.
 """
+from app.db.models import Base, User
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from app.db.models import Base, User
+from sqlalchemy.exc import SQLAlchemyError
 
 
 class DB:
@@ -30,12 +31,22 @@ class DB:
         """
         self._engine = create_engine(url_object, echo=echo)
         self.__session = None
-        # TODO: Remove database initialization drop_all from instance
-        # initialization
-        # Drop all is useful in testing, but would delete impotant data
-        # from production database table when initialized
-        # Base.metadata.drop_all(self._engine)
-        # Base.metadata.create_all(self._engine)
+        self._initialize_database()
+        
+        def _initialize_database(self):
+            """
+            Initializes the database schema by creating all tables.
+            
+            In other to avoid overwritting production data this should be used
+            cautiously during testing. During testing production database should be
+            changed, or in memory database ":memory:" should be used.
+            """
+            try:
+                Base.metadata.create_all(self._engine)
+            except SQLAlchemyError as e:
+                # TODO: Error would be logged in using a custom logger
+                # Also full exception would be logged
+                print(f"Error initializing database schema: {e}")
         
     @property
     def _session(self) -> Session:
