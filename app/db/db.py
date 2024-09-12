@@ -57,6 +57,12 @@ class DB:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
+
+    def close_session(self):
+        """Closes the active session to prevent memory leaks."""
+        if self.__session:
+            self.__session.close()
+            self.__session = None
     
     def add_user(self, username: str, hashed_password: str) -> User:
         """
@@ -79,9 +85,3 @@ class DB:
             # TODO: Error would be logged using custom logger
             print(f"Error adding user: {e}")
             return None
-        
-    def close_session(self):
-        """Closes the active session to prevent memory leaks."""
-        if self.__session:
-            self.__session.close()
-            self.__session = None
