@@ -64,6 +64,14 @@ class DB:
             self.__session.close()
             self.__session = None
     
+    def delete_tables(self):
+        """Drops all tables from Base class metadata."""
+        try:
+            Base.metadata.drop_all(self._engine)
+        except SQLAlchemyError as e:
+            # TODO: Error would be logged using custom logger
+            print(f"Error dropping tables for database schema: {e}")
+
     def add_user(self, username: str, hashed_password: str) -> User:
         """
         Add user details to database.
