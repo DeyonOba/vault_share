@@ -80,7 +80,7 @@ class DB:
             print(f"Error adding user: {e}")
             return None
         
-    def _close_session(self):
+    def close_session(self):
         """Closes the active session to prevent memory leaks."""
         if self.__session:
             self.__session.close()
