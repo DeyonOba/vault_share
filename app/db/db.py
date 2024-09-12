@@ -79,8 +79,6 @@ class DB:
             # TODO: Error would be logged using custom logger
             print(f"Error adding user: {e}")
             return None
-        finally:
-            self._close_session()
         
     def _close_session(self):
         """Closes the active session to prevent memory leaks."""
