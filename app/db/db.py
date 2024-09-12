@@ -29,7 +29,7 @@ class DB:
             echo (bool): If True, SQLAlchemy logs all SQL statements.
             Defaults to False.
         """
-        self._engine = create_engine(url_object, echo=echo)
+        self._engine = create_engine(database_url, echo=echo)
         self.__session = None
         self._initialize_database()
         
