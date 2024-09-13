@@ -44,7 +44,7 @@ class TestUserSchema(unittest.TestCase):
         self.assertEqual(User.__tablename__, "users")
     
     def test_attribute_names_update(self):
-        tested_columns = ["id", "username", "hashed_password"]
+        tested_columns = ["id", "username", "hashed_password", "role"]
         qualname = ".".join([__name__, self.__class__.test_attribute_names_update.__qualname__])
         self.assertListEqual(
             tested_columns, User.__table__.columns.keys(),
