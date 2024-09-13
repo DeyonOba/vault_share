@@ -55,6 +55,7 @@ class TestUserSchema(unittest.TestCase):
         check_column(self, User, 'id', Integer, nullable=False)
         check_column(self, User, 'username', String, nullable=False, length=250)
         check_column(self, User, 'hashed_password', String, nullable=False, length=250)
+        check_column(self, User, 'role', String, nullable=False)
     
     def test_primary_key(self):
         primary_keys = [key.name for key in User.__table__.primary_key]
