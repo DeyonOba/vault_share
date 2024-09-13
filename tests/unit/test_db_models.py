@@ -6,7 +6,7 @@ Unittest for database model schemas.
 """
 import unittest
 from app.db.models import User
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, UniqueConstraint
 from typing import Dict, Union
 
 
@@ -60,6 +60,9 @@ class TestUserSchema(unittest.TestCase):
         primary_keys = [key.name for key in User.__table__.primary_key]
         self.assertIn('id', primary_keys, 'id should be a primary key')
 
+    def test_unique_columns(self):
+        unique_col = UniqueConstraint(User.__table__.columns["username"])
+        self.assertIn(unique_col, User.__table__.constraints)
 
 if __name__ == "__main__":
     unittest.main(verbose=2)
