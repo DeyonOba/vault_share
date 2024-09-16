@@ -72,7 +72,7 @@ class DB:
             # TODO: Error would be logged using custom logger
             print(f"Error dropping tables for database schema: {e}")
 
-    def add_user(self, username: str, hashed_password: str) -> User:
+    def add_user(self, username: str, hashed_password: str, role: str=None) -> User:
         """
         Add user details to database.
         
@@ -84,7 +84,10 @@ class DB:
             User: The created User object.
         """
         try:
-            user = User(username=username, hashed_password=hashed_password)
+            if role is not None:
+                user = User(username=username, hashed_password=hashed_password, role=role)
+            else:
+                user = User(username=username, hashed_password=hashed_password)
             self._session.add(user)
             self._session.commit()
             return user
