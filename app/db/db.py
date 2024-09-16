@@ -5,7 +5,7 @@ from app.db.models import Base, User
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, NoResultFound, InvalidRequestError
 
 
 class DB:
@@ -57,7 +57,7 @@ class DB:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
-
+    
     def close_session(self):
         """Closes the active session to prevent memory leaks."""
         if self.__session:
@@ -93,3 +93,37 @@ class DB:
             # TODO: Error would be logged using custom logger
             print(f"Error adding user: {e}")
             return None
+    
+    def find_user_by(self, **kwargs) -> User:
+        """
+        Find a user using filter parameter query.
+        
+        Args:
+            **kwargs: Filter cirteron
+            
+        Returns:
+            User: User that satisfies the filter cirteron
+        
+        Raises:
+            NoResultFound: When no user satisfies the filter cirteron
+        """
+        user = self._session.query(User).filter_by(**kwargs).first()
+        
+        if not user:
+            raise NoResultFound
+        
+        return user
+    
+    def update_user(self, username, **kwargs):
+        """
+        Updates details based on the username and the keyword paramater passed.
+        
+        Args:
+            username: Username in the database
+            **kwargs: Update cirteron
+            
+        Raises:
+            InvalidRequestError: When filter cirteron does not exists
+        """
+        self._session.query(User).filter_by(username=username).update(kwargs)
+        self._session.commit()
