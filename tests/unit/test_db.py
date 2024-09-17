@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 from app.db.models import User
 from app.db.db import DB
 from parameterized import parameterized
-
+from sqlalchemy.exc import SQLAlchemyError
 
 class TestDBModule(unittest.TestCase):
     """Test DB class."""
@@ -15,7 +15,7 @@ class TestDBModule(unittest.TestCase):
         self.db = DB(database_url="sqlite:///:memory:", echo=False)
     
     @parameterized.expand([
-        ("Bob_Dylan", "bod_dylan", "awesomeBob", None),
+        ("Bob_Dylan", "bob_dylan", "awesomeBob", None),
         ("John_Doe", "john_doe", "justGiveMeAcess", None),
         ("Dev_Success", "dev_success", "PassWord", "admin"),
     ])   
@@ -44,7 +44,19 @@ class TestDBModule(unittest.TestCase):
         # Assert that the session's add and commit methods were called
         mock_session.add.assert_called_once_with(user)
         mock_session.commit.assert_called_once()
-        
+
+    @parameterized.expand([
+        ("create_user_bob_dylan", "bob_dylan", "awesomeBob", None, False),
+        ("no_username_given", None, "PassWord", "admin", True),
+        ("no_password_given", "boy_dylan", None, None, True),
+    ])
+    def test_add_user_failure(self, _, username, password, role, error):
+        if error:
+            with self.assertRaises(SQLAlchemyError):
+                self.db.add_user(username, password, role)
+        else:
+            self.db.add_user(username, password, role)
+
     @parameterized.expand([
         ("Bob_Dylan", "bob_dylan", {"password": "StrongPwd", "role": "admin"}),
         ("Dev_Success", "dev_success", {"role": "user"}),
@@ -63,6 +75,3 @@ class TestDBModule(unittest.TestCase):
         self.db.add_user(username=username, hashed_password=password, role=role)
         user = self.db.find_user_by(username=username)
         self.assertEqual(user.username, username)
-    
-        
-        
