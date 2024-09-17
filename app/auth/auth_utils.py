@@ -30,10 +30,10 @@ def _hash_password(password: str) -> str:
     pwd: bytes = password.encode('utf-8')
 
     hash_pwd: bytes = hashlib.pbkdf2_hmac('sha256', pwd, salt, 100_000)
-    # Add salt to the end of the hashed password to ensure easy
+    # Add salt to the begining of the hashed password to ensure easy
     # password decyrption/validation
-    return hash_pwd.hex() + salt.hex()
-
+    return salt.hex() + hash_pwd.hex()
+    
 if __name__ == "__main__":
     print(f"Try generation UUID: {_generate_uuid()}")
     
