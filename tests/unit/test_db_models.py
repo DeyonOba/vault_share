@@ -63,12 +63,7 @@ class TestUserSchema(unittest.TestCase):
         verify_table_name(self, User, "users")
     
     def test_attribute_names_update(self):
-        tested_columns = ["id", "username", "hashed_password", "role"]
-        qualname = ".".join([__name__, self.__class__.test_attribute_names_update.__qualname__])
-        self.assertListEqual(
-            tested_columns, User.__table__.columns.keys(),
-            msg=f"Add schema attribute testcase to class <{self.__class__.__name__}> and update <{qualname}>"
-            )
+        verify_expected_attribute_names(self, User, EXPECTED_USER_COLUMNS)
 
     def test_table_attributes(self):
         check_column(self, User, 'id', Integer, nullable=False)
