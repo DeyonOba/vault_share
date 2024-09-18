@@ -9,6 +9,8 @@ from app.db.models import User
 from sqlalchemy import Integer, String, UniqueConstraint
 from typing import Dict, Union
 
+def verify_table_name(obj, model, table_name):
+    obj.assertEqual(model.__tablename__, table_name)
 
 def check_column(
     obj, model, column_name, expected_dtype, 
@@ -48,7 +50,7 @@ def verify_primary_keys(obj, model, col_name):
  
 class TestUserSchema(unittest.TestCase):        
     def test_table_name(self):
-        self.assertEqual(User.__tablename__, "users")
+        verify_table_name(self, User, "users")
     
     def test_attribute_names_update(self):
         tested_columns = ["id", "username", "hashed_password", "role"]
