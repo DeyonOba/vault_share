@@ -72,6 +72,3 @@ class TestUserSchema(unittest.TestCase):
     def test_unique_columns(self):
         unique_col = UniqueConstraint(User.__table__.columns["username"])
         self.assertIn(unique_col, User.__table__.constraints)
-
-if __name__ == "__main__":
-    unittest.main(verbose=2)
