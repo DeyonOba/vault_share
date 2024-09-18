@@ -38,6 +38,13 @@ def check_column(
             f"{column_name} length should be {length}"
         )
 
+def verify_primary_keys(obj, model, col_name):
+    primary_keys = [key.name for key in model.__table__.primary_key]
+    obj.assertIn(
+        col_name, primary_keys,
+        f"{col_name} should be a primary key"
+    )
+
  
 class TestUserSchema(unittest.TestCase):        
     def test_table_name(self):
@@ -58,8 +65,7 @@ class TestUserSchema(unittest.TestCase):
         check_column(self, User, 'role', String, nullable=False)
     
     def test_primary_key(self):
-        primary_keys = [key.name for key in User.__table__.primary_key]
-        self.assertIn('id', primary_keys, 'id should be a primary key')
+        verify_primary_keys(self, User, "id")
 
     def test_unique_columns(self):
         unique_col = UniqueConstraint(User.__table__.columns["username"])
