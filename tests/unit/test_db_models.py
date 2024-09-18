@@ -9,6 +9,8 @@ from app.db.models import User
 from sqlalchemy import Integer, String, UniqueConstraint
 from typing import Dict, Union
 
+EXPECTED_USER_COLUMNS = ["id", "username", "hashed_password", "role"]
+
 def verify_table_name(obj, model, table_name):
     obj.assertEqual(model.__tablename__, table_name)
 
@@ -45,6 +47,14 @@ def verify_primary_keys(obj, model, col_name):
     obj.assertIn(
         col_name, primary_keys,
         f"{col_name} should be a primary key"
+    )
+    
+def verify_expected_attribute_names(obj, model, col_names: list):
+    qualname = ".".join([__name__, obj.__class__.test_attribute_names_update.__qualname__])
+    error_msg = f"Add schema attribute testcase to class <{obj.__class__.__name__}> and update <{qualname}>"
+    obj.assertListEqual(
+        col_names, model.__table__.columns.keys(),
+        msg=error_msg
     )
 
  
