@@ -5,7 +5,12 @@ from app.db.models import Base, User
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import SQLAlchemyError, NoResultFound, InvalidRequestError
+from sqlalchemy.exc import (
+    SQLAlchemyError,
+    NoResultFound,
+    InvalidRequestError,
+    )
+from sqlite3 import IntegrityError
 
 
 class DB:
@@ -91,11 +96,13 @@ class DB:
             self._session.add(user)
             self._session.commit()
             return user
-        except SQLAlchemyError as e:
-            self._session.rollback()
+        
+        # except (SQLAlchemyError, IntegrityError) as e:
+        except Exception as e:
+            # self._session.rollback()
             # TODO: Error would be logged using custom logger
-            print(f"Error adding user: {e}")
-            return None
+            # print(f"Error adding user: {e}")
+            raise SQLAlchemyError(f"Error adding user: {e}")
     
     def find_user_by(self, **kwargs) -> User:
         """
