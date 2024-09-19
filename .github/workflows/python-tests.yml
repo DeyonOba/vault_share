@@ -1,0 +1,48 @@
+name: Python Unit Tests
+
+on:
+  # Run the workflow when pushing to or creating a pull request for the main branch
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, 3.10]
+
+    steps:
+    # Step 1: Check out the code from the repository
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    # Step 4: Run tests using unittest
+    - name: Run unit tests
+      run: |
+        python -m unittest discover -s tests
+
+    # Step 5: Output the result (optional, for test coverage, etc.)
+    - name: Upload test results
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: ./test-results
