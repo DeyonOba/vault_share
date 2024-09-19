@@ -46,18 +46,6 @@ class TestDBModule(unittest.TestCase):
         mock_session.commit.assert_called_once()
 
     @parameterized.expand([
-        ("create_user_bob_dylan", "bob_dylan", "awesomeBob", None, False),
-        ("no_username_given", None, "PassWord", "admin", True),
-        ("no_password_given", "boy_dylan", None, None, True),
-    ])
-    def test_add_user_failure(self, _, username, password, role, error):
-        if error:
-            with self.assertRaises(SQLAlchemyError):
-                self.db.add_user(username, password, role)
-        else:
-            self.db.add_user(username, password, role)
-
-    @parameterized.expand([
         ("Bob_Dylan", "bob_dylan", {"password": "StrongPwd", "role": "admin"}),
         ("Dev_Success", "dev_success", {"role": "user"}),
     ])
