@@ -6,10 +6,13 @@ Unittest for database model schemas.
 """
 import unittest
 from app.db.models import User
-from sqlalchemy import Integer, String, UniqueConstraint
+from sqlalchemy import Integer, DateTime, String, Float, UniqueConstraint
 from typing import Dict, Union
 
-EXPECTED_USER_COLUMNS = ["id", "username", "hashed_password", "role"]
+EXPECTED_USER_COLUMNS = [
+    "id", "username", "hashed_password", "role",
+    "memory_allocated", "memory_used", "created_at"
+]
 
 def verify_table_name(obj, model, table_name):
     obj.assertEqual(model.__tablename__, table_name)
@@ -70,6 +73,9 @@ class TestUserSchema(unittest.TestCase):
         check_column(self, User, 'username', String, nullable=False, length=250)
         check_column(self, User, 'hashed_password', String, nullable=False, length=250)
         check_column(self, User, 'role', String, nullable=False)
+        check_column(self, User, 'memory_allocated', Float)
+        check_column(self, User, "memory_used", Float)
+        check_column(self, User, "created_at", DateTime)
     
     def test_primary_key(self):
         verify_primary_keys(self, User, "id")
