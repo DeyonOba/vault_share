@@ -32,9 +32,10 @@
 - **OS: Ubuntu 22.04**
 - **Python version 3.10.12**
   
-Code the repository
+Clone the repository
 ```bash
 git clone <repo>
+cd <repo_name>
 ```
 
 Set up a Python virtual environment at the root and activate it.
