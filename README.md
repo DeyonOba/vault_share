@@ -48,3 +48,7 @@ Install required dependencies
 ```bash
 pip install -r requirements.txt
 ```
+
+## Database ERD
+
+![db_image](images/db_schema.png)
