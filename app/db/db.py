@@ -1,7 +1,7 @@
 """
 DB module for handling database interactions.
 """
-from app.db.models import Base, User
+from app.db.models import Base, User, Workspace
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -77,63 +77,70 @@ class DB:
             # TODO: Error would be logged using custom logger
             print(f"Error dropping tables for database schema: {e}")
 
-    def add_user(self, username: str, hashed_password: str, role: str=None) -> User:
+    def create(self, model, **kwargs):
         """
-        Add user details to database.
+        Add table details to database.
         
         Args:
-            username (str): The username of the user.
-            hashed_password (str): The hashed password of the user.
+            model: Valid table schema class from db.models
+            kwargs: Argument needed to create the a table entry.
             
         Returns:
-            User: The created User object.
+            Object: The created table object instance of the validate entry.
         """
-        try:
-            if role is not None:
-                user = User(username=username, hashed_password=hashed_password, role=role)
-            else:
-                user = User(username=username, hashed_password=hashed_password)
-            self._session.add(user)
-            self._session.commit()
-            return user
-        
-        # except (SQLAlchemyError, IntegrityError) as e:
-        except Exception as e:
-            # self._session.rollback()
-            # TODO: Error would be logged using custom logger
-            # print(f"Error adding user: {e}")
-            raise SQLAlchemyError(f"Error adding user: {e}")
+        obj = model(**kwargs)
+        self._session.add(obj)
+        self._session.commit()
+        return obj
     
-    def find_user_by(self, **kwargs) -> User:
+    def retrieve(self, model, **kwargs) -> User:
         """
-        Find a user using filter parameter query.
+        Retrieves an entry for the specified model passed.
         
         Args:
-            **kwargs: Filter cirteron
+            model: Valid table schema class from db.models
+            kwargs: Filter cirteron
             
         Returns:
-            User: User that satisfies the filter cirteron
+            obj: The retrieved entry found
         
         Raises:
-            NoResultFound: When no user satisfies the filter cirteron
+            NoResultFound: When no entry satisfies the filter cirteron
         """
-        user = self._session.query(User).filter_by(**kwargs).first()
+        obj = self._session.query(model).filter_by(**kwargs).first()
         
-        if not user:
+        if not obj:
             raise NoResultFound
         
-        return user
+        return obj
     
-    def update_user(self, username, **kwargs):
+    def update(self, model, update_filter: dict, **kwargs) -> int:
         """
-        Updates details based on the username and the keyword paramater passed.
+        Filters records using the update_filter and then update the records based on
+        keyword paramater passed.
         
         Args:
-            username: Username in the database
+            model: Valid table schema class from db.models
+            update_filter (dict): Dictionary containing the parameter and argument used
+            to filter out the entry to be updated
             **kwargs: Update cirteron
-            
-        Raises:
-            InvalidRequestError: When filter cirteron does not exists
+        Returns:
+            num_of_updates (int): Number of records updated
         """
-        self._session.query(User).filter_by(username=username).update(kwargs)
+        num_of_updates = self._session.query(model).filter_by(**update_filter).update(kwargs)
         self._session.commit()
+        return num_of_updates
+
+    def delete(self, model, delete_filter: dict) -> int:
+        """
+        Filters records to be deleted using `delete_filter`, then delete filtered records.
+        
+        Args:
+            model: Valid table schema class from db.models
+            delete_filter (dict): Dictionary
+        
+        Returns:
+            num_of_deletes: Number of records deleted
+        """
+        num_of_deletes = self._session.query(model).filter_by(**delete_filter).delete()
+        return num_of_deletes
