@@ -18,7 +18,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     username = Column(String(250), nullable=False, unique=True)
     hashed_password = Column(String(250), nullable=False)
     role = Column(String, nullable=False, insert_default="user")
