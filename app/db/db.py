@@ -151,3 +151,38 @@ class DB:
             if key not in model.__table__.columns.keys()\
                 or key in excluded_attr:
                 raise InvalidRequestError(key)
+
+
+class UserDB(DB):
+    """
+    UserDB provides database interaction with "users" table.
+    
+    UserDB class inherites attributes and methods from the DB class.
+    """
+    EXCLUDE_UPDATE_ATTR = ["id", "created_at"]
+    
+    def __init__(self, database_url: str = "sqlite:///app.db", echo: bool = False):
+        """Initialize class and parent class."""
+        super().__init__(database_url, echo)
+        
+    def add_user(self, username: str, password: str) -> User:
+        user = self.create(User, username=username, hashed_password=password)
+        return user
+    
+    def find_user(self, **kwargs) -> User:
+        self.validate_attr(User, kwargs)
+        user = self.retrieve(User, **kwargs)
+        return user
+    
+    def update_user(self, update_filter, **kwargs) -> int:
+        self.validate_attr(User, update_filter, self.EXCLUDE_UPDATE_ATTR)
+        self.validate_attr(User, kwargs, self.EXCLUDE_UPDATE_ATTR)
+
+        num_of_updates = self.update(User, update_filter, **kwargs)
+        return num_of_updates
+    
+    def remove_user(self, **kwargs) -> int:
+        self.validate_attr(User, kwargs)
+        
+        num_of_deletes = self.delete(User, **kwargs)
+        return num_of_deletes
