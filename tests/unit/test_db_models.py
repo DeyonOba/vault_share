@@ -5,13 +5,17 @@ Unittest for database model schemas.
     - ...
 """
 import unittest
-from app.db.models import User
+from app.db.models import User, Workspace
 from sqlalchemy import Integer, DateTime, String, Float, UniqueConstraint
 from typing import Dict, Union
 
 EXPECTED_USER_COLUMNS = [
     "id", "username", "hashed_password", "role",
     "memory_allocated", "memory_used", "created_at"
+]
+EXPECTED_WORKSPACE_COLUMNS = [
+    "id", "name", "admin_id", "total_memory",
+    "memory_used", "max_users", "created_at"
 ]
 
 def verify_table_name(obj, model, table_name):
@@ -83,3 +87,23 @@ class TestUserSchema(unittest.TestCase):
     def test_unique_columns(self):
         unique_col = UniqueConstraint(User.__table__.columns["username"])
         self.assertIn(unique_col, User.__table__.constraints)
+
+
+class TestWorkspaceSchema(unittest.TestCase):
+    def test_table_name(self):
+        verify_table_name(self, Workspace, "workspaces")
+
+    def test_attribute_names_update(self):
+        verify_expected_attribute_names(self, Workspace, EXPECTED_WORKSPACE_COLUMNS)
+
+    def test_table_attributes(self):
+        check_column(self, Workspace, "id", String, nullable=False)
+        check_column(self, Workspace, "name", String, nullable=False)
+        check_column(self, Workspace, "admin_id", String, nullable=False)
+        check_column(self, Workspace, "total_memory", Float)
+        check_column(self, Workspace, "memory_used", Float)
+        check_column(self, Workspace, "max_users", Integer)
+        check_column(self, Workspace, "created_at", DateTime)
+
+    def test_primary_key(self):
+        verify_primary_keys(self, Workspace, "id")
