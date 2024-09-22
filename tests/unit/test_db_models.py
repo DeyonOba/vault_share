@@ -69,7 +69,7 @@ class TestUserSchema(unittest.TestCase):
         verify_expected_attribute_names(self, User, EXPECTED_USER_COLUMNS)
 
     def test_table_attributes(self):
-        check_column(self, User, 'id', Integer, nullable=False)
+        check_column(self, User, 'id', String, nullable=False)
         check_column(self, User, 'username', String, nullable=False, length=250)
         check_column(self, User, 'hashed_password', String, nullable=False, length=250)
         check_column(self, User, 'role', String, nullable=False)
