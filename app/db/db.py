@@ -131,16 +131,23 @@ class DB:
         self._session.commit()
         return num_of_updates
 
-    def delete(self, model, delete_filter: dict) -> int:
+    def delete(self, model, **kwargs) -> int:
         """
         Filters records to be deleted using `delete_filter`, then delete filtered records.
         
         Args:
             model: Valid table schema class from db.models
-            delete_filter (dict): Dictionary
+            kwargs: Deletion cirteron
         
         Returns:
             num_of_deletes: Number of records deleted
         """
-        num_of_deletes = self._session.query(model).filter_by(**delete_filter).delete()
+        num_of_deletes = self._session.query(model).filter_by(**kwargs).delete()
+        self._session.commit()
         return num_of_deletes
+                 
+    def validate_attr(self, model, passed_attr: dict, excluded_attr: list=[]):
+        for key in passed_attr:
+            if key not in model.__table__.columns.keys()\
+                or key in excluded_attr:
+                raise InvalidRequestError(key)
