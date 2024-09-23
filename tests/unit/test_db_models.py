@@ -7,9 +7,11 @@ schema satisfies the outlined app business logic.
     - WorkspaceUser
     - Folder
     - File
+    - Invite
+    - Alert
 """
 import unittest
-from vaultShare.db.models import User, Workspace, WorkspaceUser, Folder, File, Invite
+from vaultShare.db.models import User, Workspace, WorkspaceUser, Folder, File, Invite, Alert
 from sqlalchemy import Integer, Boolean, DateTime, String, Float, UniqueConstraint
 from typing import Dict, Union
 
@@ -29,10 +31,18 @@ EXPECTED_FOLDER_COLUMNS = [
     "id", "name", "workspace_id", "user_id",
     "parent_folder_id", "is_root", "created_at"
 ]
-EXPECTED_FILE_COLUMN = [
+EXPECTED_FILE_COLUMNS = [
     "id", "name", "path", "workspace_id",
     "user_id", "folder_id", "size", "is_directory",
     "created_at", "updated_at"
+]
+EXPECTED_INVITE_COLUMNS = [
+    "id", "invite_type", "workspace_id", "inviter_id",
+    "invitee_email", "status", "created_at"
+]
+EXPECTED_ALERT_COLUMNS = [
+    "id", "alert_type", "user_id", "workspace_id",
+    "message", "is_read", "created_at"
 ]
 
 def verify_table_name(obj, model, table_name):
@@ -168,7 +178,10 @@ class TestFolderSchema(unittest.TestCase):
 class TestFileSchema(unittest.TestCase):
     def test_table_name(self):
         verify_table_name(self, File, "files")
-        
+    
+    def test_attribute_names_update(self):
+        verify_expected_attribute_names(self, File, EXPECTED_FILE_COLUMNS)
+           
     def test_table_attributes(self):
         check_column(self, File, "id", String, nullable=False)
         check_column(self, File, "name", String, nullable=False)
@@ -188,6 +201,9 @@ class TestInviteSchema(unittest.TestCase):
     def test_table_name(self):
         verify_table_name(self, Invite, "invites")
         
+    def test_attribute_names_update(self):
+        verify_expected_attribute_names(self, Invite, EXPECTED_INVITE_COLUMNS)
+           
     def test_table_attributes(self):
         check_column(self, Invite, "id", String, nullable=False)
         check_column(self, Invite, "invite_type", String, nullable=False)
@@ -199,3 +215,22 @@ class TestInviteSchema(unittest.TestCase):
         
     def test_primary_key(self):
         verify_primary_keys(self, Invite, "id")
+
+class TestAlertSchema(unittest.TestCase):
+    def test_table_name(self):
+        verify_table_name(self, Alert, "alerts")
+    
+    def test_attribute_names_update(self):
+        verify_expected_attribute_names(self, Alert, EXPECTED_ALERT_COLUMNS)
+        
+    def test_table_attributes(self):
+        check_column(self, Alert, "id", String, nullable=False)
+        check_column(self, Alert, "alert_type", String, nullable=False)
+        check_column(self, Alert, "user_id", String, nullable=False)
+        check_column(self, Alert, "workspace_id", String)
+        check_column(self, Alert, "message", String, nullable=False)
+        check_column(self, Alert, "is_read", Boolean)
+        check_column(self, Alert, "created_at", DateTime)
+        
+    def test_primary_key(self):
+        verify_primary_keys(self, Alert, "id")
