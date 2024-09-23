@@ -1,7 +1,7 @@
 """
 DB module for handling database interactions.
 """
-from app.db.models import Base, User, Workspace
+from .models import Base, User, Workspace
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
