@@ -83,13 +83,13 @@ class File(Base):
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
     path = Column(Text, nullable=False)
-    workspace_id = Column(String, ForeignKey("workspaces.id"))
+    workspace_id = Column(String, ForeignKey("workspaces.id"), nullable=False)
     user_id = Column(String, ForeignKey("users.id"))
     folder_id = Column(String, ForeignKey("folders.id"))
     size = Column(Float, nullable=False) # size in MB
     is_directory = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    update_at = Column(DateTime, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc))
     
 
 class Invite(Base):
@@ -98,11 +98,11 @@ class Invite(Base):
     id = Column(String, primary_key=True)
     # e.g., "workspace_invite"
     invite_type = Column(String, nullable=False)
-    workspace_id = Column(String, ForeignKey("workspaces.id"))
-    inviter_id = Column(String, ForeignKey("users.id"))
+    workspace_id = Column(String, ForeignKey("workspaces.id"), nullable=False)
+    inviter_id = Column(String, ForeignKey("users.id"), nullable=False)
     invitee_email = Column(String, nullable=False)
     status = Column(String, default="pending") # invite status
-    create_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
     
     # Relationships
     inviter = relationship("User", backref="sent_invites")
@@ -114,7 +114,7 @@ class Alert(Base):
     id = Column(String, primary_key=True)
     # e.g., "invite", "memory_usage", "memory_exceeded"
     alert_type = Column(String, nullable=False)
-    user_id = Column(String, ForeignKey("users.id"))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
     workspace_id = Column(String, ForeignKey("workspaces.id"))
     message = Column(Text, nullable=False)
     is_read = Column(Boolean, default=False)
