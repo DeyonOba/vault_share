@@ -130,4 +130,4 @@ class TestWorkspaceUserSchema(unittest.TestCase):
         check_column(self, WorkspaceUser, "created_at", DateTime)
         
     def test_primary_key(self):
-        verify_table_name(self, WorkspaceUser, "id")
+        verify_primary_keys(self, WorkspaceUser, "id")
