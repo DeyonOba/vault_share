@@ -36,7 +36,7 @@ class Workspace(Base):
     
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
-    admin_id = Column(String, ForeignKey('users.id'))
+    admin_id = Column(String, ForeignKey('users.id'), nullable=False)
     total_memory = Column(Float, default=10.0)
     memory_used = Column(Float, default=0.0)
     max_users = Column(Integer, default=5)
