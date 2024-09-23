@@ -18,9 +18,20 @@ Represents users of the system with their roles, memory usage, and allocations.
 |`role`|`String`|`default="user"`| Team role of the user, defaults to "user", but "admin" could also be assigned.|
 |`memory_allocation`| `Float`|`default=0`|Memory quota assigned by admin to user's in MB.|
 |`memory_used`|`Float`|`default=0`| Memory currently used in MB|
-|`createdAt`| `DateTime`|`default=0`| Stores the time the account is created.|
-### Workspace
+|`createdAt`| `DateTime`|`datetime.datetime.now(timezone.utc)`| Stores the time the account is created.|
+### Workspace:  *Table Name -> `workspaces`*
 Represents a workspace, including memory usage, maximum users, and admin.
+
+|ColumnName|DataType|Constraint|Description|
+|:--|:--|:--|:--|
+|`id`|`String`|`pk`|Workspace id|
+|`name`|`String`|`not null`|Name of workspace, workspace name must be passed in.|
+|`admin_id`|`String`|`String` `fk('users.id')`|Admin id, referencing the user id that created the workspace.|
+|`total_memory`|`Float`|`default=10.0`|Total memory quota allocated to workspace.|
+|`memory_used`|`Float`|`default=0.0`|Memory currently used by the workspace user's.|
+|`max_users`|`Integer`|`default=5`|Maximum number of users within the workspace, this also includes the admin who created the workspace.|
+|`created_at`|`DateTime`|`default=datetime.now(timezone.utc)`|Date and time the workspace was created.|
+|`updated_at`|`DateTime`|`default=datetime.now(timezone.utc)`|Date and time the workspace was last updated.|
 
 ### WorkspaceUser
 Manages the relationship between users and workspaces, including their roles and allocated memory.
