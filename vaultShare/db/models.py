@@ -53,8 +53,8 @@ class WorkspaceUser(Base):
     __tablename__ = "workspace_users"
     
     id = Column(String, primary_key=True)
-    workspace_id = Column(String, ForeignKey("workspaces.id"))
-    user_id = Column(String, ForeignKey("users.id"))
+    workspace_id = Column(String, ForeignKey("workspaces.id"), nullable=False)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
     role = Column(String, nullable=False) # "admin" or "user"
     memory_allocated = Column(Float, default=0.0) # memory allocated to user by admin
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
@@ -65,7 +65,7 @@ class Folder(Base):
     
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
-    workspace_id = Column(String, ForeignKey("workspaces.id"))
+    workspace_id = Column(String, ForeignKey("workspaces.id"), nullable=False)
     # user_id is nullable for admin folder
     user_id = Column(String, ForeignKey("users.id"), nullable=True)
     # parent_folder_id is nullable for nested folders
@@ -73,7 +73,6 @@ class Folder(Base):
     is_root = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     
-    # 1 is 1 relationship
     # Self-referencing relationship for nested folders
     subfolders = relationship('Folder', backref=backref("parent_folder", remote_side=[id]))
     
