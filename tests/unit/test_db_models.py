@@ -1,13 +1,15 @@
 """
-Unittest for database model schemas.
+Unittest for database model schemas. Test module ensure that schema
+schema satisfies the outlined app business logic.
 
     - Users
     - Workspace
     - WorkspaceUser
+    - Folder
 """
 import unittest
-from vaultShare.db.models import User, Workspace, WorkspaceUser
-from sqlalchemy import Integer, DateTime, String, Float, UniqueConstraint
+from vaultShare.db.models import User, Workspace, WorkspaceUser, Folder
+from sqlalchemy import Integer, Boolean, DateTime, String, Float, UniqueConstraint
 from typing import Dict, Union
 
 EXPECTED_USER_COLUMNS = [
@@ -21,6 +23,10 @@ EXPECTED_WORKSPACE_COLUMNS = [
 EXPECTED_WORKSPACEUSER_COLUMNS = [
     "id", "workspace_id", "user_id", "role",
     "memory_allocated", "created_at"
+]
+EXPECTED_FOLDER_COLUMNS = [
+    "id", "name", "workspace_id", "user_id",
+    "parent_folder_id", "is_root", "created_at"
 ]
 
 def verify_table_name(obj, model, table_name):
@@ -131,3 +137,23 @@ class TestWorkspaceUserSchema(unittest.TestCase):
         
     def test_primary_key(self):
         verify_primary_keys(self, WorkspaceUser, "id")
+
+
+class TestFolderSchema(unittest.TestCase):
+    def test_table_name(self):
+        verify_table_name(self, Folder, "folders")
+    
+    def test_attribute_names_update(self):
+        verify_expected_attribute_names(self, Folder, EXPECTED_FOLDER_COLUMNS)
+    
+    def test_table_attributes(self):
+        check_column(self, Folder, "id", String, nullable=False)
+        check_column(self, Folder, "name", String, nullable=False)
+        check_column(self, Folder, "workspace_id", String, nullable=False)
+        check_column(self, Folder, "user_id", String)
+        check_column(self, Folder, "parent_folder_id", String)
+        check_column(self, Folder, "is_root", Boolean)
+        check_column(self, Folder, "created_at", DateTime)
+        
+    def test_primary_key(self):
+        verify_primary_keys(self, Folder, "id")
