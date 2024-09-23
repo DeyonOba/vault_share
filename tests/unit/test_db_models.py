@@ -6,9 +6,10 @@ schema satisfies the outlined app business logic.
     - Workspace
     - WorkspaceUser
     - Folder
+    - File
 """
 import unittest
-from vaultShare.db.models import User, Workspace, WorkspaceUser, Folder
+from vaultShare.db.models import User, Workspace, WorkspaceUser, Folder, File, Invite
 from sqlalchemy import Integer, Boolean, DateTime, String, Float, UniqueConstraint
 from typing import Dict, Union
 
@@ -27,6 +28,11 @@ EXPECTED_WORKSPACEUSER_COLUMNS = [
 EXPECTED_FOLDER_COLUMNS = [
     "id", "name", "workspace_id", "user_id",
     "parent_folder_id", "is_root", "created_at"
+]
+EXPECTED_FILE_COLUMN = [
+    "id", "name", "path", "workspace_id",
+    "user_id", "folder_id", "size", "is_directory",
+    "created_at", "updated_at"
 ]
 
 def verify_table_name(obj, model, table_name):
@@ -157,3 +163,39 @@ class TestFolderSchema(unittest.TestCase):
         
     def test_primary_key(self):
         verify_primary_keys(self, Folder, "id")
+        
+
+class TestFileSchema(unittest.TestCase):
+    def test_table_name(self):
+        verify_table_name(self, File, "files")
+        
+    def test_table_attributes(self):
+        check_column(self, File, "id", String, nullable=False)
+        check_column(self, File, "name", String, nullable=False)
+        check_column(self, File, "workspace_id", String, nullable=False)
+        check_column(self, File, "user_id", String)
+        check_column(self, File, "folder_id", String)
+        check_column(self, File, "size", Float, nullable=False)
+        check_column(self, File, "is_directory", Boolean)
+        check_column(self, File, "created_at", DateTime)
+        check_column(self, File, "updated_at", DateTime)
+        
+    def test_primary_key(self):
+        verify_primary_keys(self, File, "id")
+
+
+class TestInviteSchema(unittest.TestCase):
+    def test_table_name(self):
+        verify_table_name(self, Invite, "invites")
+        
+    def test_table_attributes(self):
+        check_column(self, Invite, "id", String, nullable=False)
+        check_column(self, Invite, "invite_type", String, nullable=False)
+        check_column(self, Invite, "workspace_id", String, nullable=False)
+        check_column(self, Invite, "inviter_id", String, nullable=False)
+        check_column(self, Invite, "invitee_email", String, nullable=False)
+        check_column(self, Invite, "status", String)
+        check_column(self, Invite, "created_at", DateTime)
+        
+    def test_primary_key(self):
+        verify_primary_keys(self, Invite, "id")
