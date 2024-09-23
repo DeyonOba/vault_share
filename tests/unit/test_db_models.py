@@ -6,7 +6,7 @@ Unittest for database model schemas.
     - WorkspaceUser
 """
 import unittest
-from app.db.models import User, Workspace, WorkspaceUser
+from vaultShare.db.models import User, Workspace, WorkspaceUser
 from sqlalchemy import Integer, DateTime, String, Float, UniqueConstraint
 from typing import Dict, Union
 

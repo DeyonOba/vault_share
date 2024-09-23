@@ -3,8 +3,8 @@ Test database interactions using the DB class.
 """
 import unittest
 from unittest.mock import patch, MagicMock
-from app.db.models import User
-from app.db.db import DB
+from vaultShare.db.models import User
+from vaultShare.db import DB
 from parameterized import parameterized
 from sqlalchemy.exc import SQLAlchemyError
 

@@ -3,7 +3,7 @@ Test Authentication modules.
 """
 import unittest
 from parameterized import parameterized
-from app.auth.auth_utils import _hash_password, verify_password
+from vaultShare.auth.auth_utils import _hash_password, verify_password
 
 
 class TestAuthUtils(unittest.TestCase):
