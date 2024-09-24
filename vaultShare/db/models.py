@@ -24,6 +24,7 @@ class User(Base):
     role = Column(String, nullable=False, insert_default="user")
     memory_allocated = Column(Float, default=0.0)
     memory_used = Column(Float, default=0.0)
+    session_id = Column(String)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     
     # users relationships
