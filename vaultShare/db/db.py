@@ -165,8 +165,8 @@ class UserDB(DB):
         """Initialize class and parent class."""
         super().__init__(database_url, echo)
         
-    def add_user(self, username: str, password: str) -> User:
-        user = self.create(User, username=username, hashed_password=password)
+    def add_user(self, id: str, username: str, password: str) -> User:
+        user = self.create(User, id=id, username=username, hashed_password=password)
         return user
     
     def find_user(self, **kwargs) -> User:
@@ -185,4 +185,39 @@ class UserDB(DB):
         self.validate_attr(User, kwargs)
         
         num_of_deletes = self.delete(User, **kwargs)
+        return num_of_deletes
+
+
+class WorkspaceDB(DB):
+    """
+    WorkspaceDB provides database interaction with "workspaces" table.
+    
+    WorkspaceDB class inherites attributes and methods from the DB class.
+    """
+    EXCLUDE_UPDATE_ATTR = ["id", "created_at", "memory_used"]
+    
+    def __init__(self, database_url: str = "sqlite:///app.db", echo: bool = False):
+        """Initialize class and parent class."""
+        super().__init__(database_url, echo)
+        
+    def add_workspace(self, id: str, name: str, admin_id: str) -> Workspace:
+        workspace = self.create(Workspace, id=id, name=name, admin_id=admin_id)
+        return workspace
+    
+    def find_workspace(self, **kwargs) -> Workspace:
+        self.validate_attr(Workspace, kwargs)
+        workspace = self.retrieve(Workspace, **kwargs)
+        return workspace
+    
+    def update_workspace(self, update_filter, **kwargs) -> int:
+        self.validate_attr(User, update_filter, self.EXCLUDE_UPDATE_ATTR)
+        self.validate_attr(User, kwargs, self.EXCLUDE_UPDATE_ATTR)
+
+        num_of_updates = self.update(Workspace, update_filter, **kwargs)
+        return num_of_updates
+    
+    def remove_workspace(self, **kwargs) -> int:
+        self.validate_attr(Workspace, kwargs)
+        
+        num_of_deletes = self.delete(Workspace, **kwargs)
         return num_of_deletes
