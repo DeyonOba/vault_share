@@ -20,8 +20,8 @@ class User(Base):
 
     id = Column(String, primary_key=True)
     email = Column(String, nullable=False, unique=True)
-    username = Column(String(250), nullable=False, unique=True)
-    hashed_password = Column(String(250), nullable=False)
+    username = Column(String, nullable=False, unique=True)
+    hashed_password = Column(String, nullable=False)
     role = Column(String, nullable=False, insert_default="user")
     memory_allocated = Column(Float, default=0.0)
     memory_used = Column(Float, default=0.0)
