@@ -5,6 +5,7 @@ from .auth_utils import _generate_uuid, verify_password, _hash_password
 from vaultShare.db import DB, UserDB, WorkspaceDB
 from vaultShare.db.models import User
 from sqlalchemy.exc import NoResultFound
+from ..exceptions import UserAlreadyExists
 
 
 class Auth:
@@ -47,7 +48,7 @@ class Auth:
             user = None
             
         if user:
-            raise ValueError(f"User email '{email}' already exists")
+            raise UserAlreadyExists(f"User email '{email}' already exists")
         
         id_ = _generate_uuid()
         hashed_password = _hash_password(password)
