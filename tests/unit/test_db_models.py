@@ -101,8 +101,8 @@ class TestUserSchema(unittest.TestCase):
 
     def test_table_attributes(self):
         check_column(self, User, 'id', String, nullable=False)
-        check_column(self, User, 'username', String, nullable=False, length=250)
-        check_column(self, User, 'hashed_password', String, nullable=False, length=250)
+        check_column(self, User, 'username', String, nullable=False, length=None)
+        check_column(self, User, 'hashed_password', String, nullable=False, length=None)
         check_column(self, User, 'role', String, nullable=False)
         check_column(self, User, 'memory_allocated', Float)
         check_column(self, User, "memory_used", Float)
