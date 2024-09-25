@@ -165,8 +165,8 @@ class UserDB(DB):
         """Initialize class and parent class."""
         super().__init__(database_url, echo)
         
-    def add_user(self, id: str, username: str, password: str) -> User:
-        user = self.create(User, id=id, username=username, hashed_password=password)
+    def add_user(self, id: str, username: str, email: str, password: str) -> User:
+        user = self.create(User, id=id, email=email, username=username, hashed_password=password)
         return user
     
     def find_user(self, **kwargs) -> User:
