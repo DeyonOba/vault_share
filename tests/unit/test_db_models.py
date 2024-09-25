@@ -17,7 +17,8 @@ from typing import Dict, Union
 
 EXPECTED_USER_COLUMNS = [
     "id", "username", "hashed_password", "role",
-    "memory_allocated", "memory_used", "created_at"
+    "memory_allocated", "memory_used", "created_at",
+    "session_id", "email"
 ]
 EXPECTED_WORKSPACE_COLUMNS = [
     "id", "name", "admin_id", "total_memory",
