@@ -1,9 +1,10 @@
 """
 Module contains class for Authentication.
 """
-from .auth_utils import _generate_uuid, verify_password
+from .auth_utils import _generate_uuid, verify_password, _hash_password
 from vaultShare.db import DB, UserDB, WorkspaceDB
 from vaultShare.db.models import User
+from sqlalchemy.exc import NoResultFound
 
 
 class Auth:
@@ -38,7 +39,7 @@ class Auth:
             user = None
 
         if user:
-            raise ValueError(f"User {username} already exists")
+            raise ValueError(f"Username '{username}' already exists")
         
         try:
             user = self._userdb.find_user(email=email)
@@ -46,13 +47,15 @@ class Auth:
             user = None
             
         if user:
-            raise ValueError(f"User {email} already exists")
-
+            raise ValueError(f"User email '{email}' already exists")
+        
+        id_ = _generate_uuid()
         hashed_password = _hash_password(password)
 
         user = self._userdb.add_user(
+            id=id_,
             username=username,
             email=email,
-            hashed_password=hashed_password
+            password=hashed_password
         )
         return user
