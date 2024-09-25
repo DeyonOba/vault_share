@@ -17,7 +17,7 @@ from typing import Dict, Union
 
 EXPECTED_USER_COLUMNS = [
     "id", "email", "username", "hashed_password", "role",
-    "memory_allocated", "memory_used", "session_id", "created_at",
+    "memory_allocated", "memory_used", "token", "created_at",
 ]
 EXPECTED_WORKSPACE_COLUMNS = [
     "id", "name", "admin_id", "total_memory",
@@ -107,7 +107,7 @@ class TestUserSchema(unittest.TestCase):
         check_column(self, User, 'role', String, nullable=False)
         check_column(self, User, 'memory_allocated', Float)
         check_column(self, User, "memory_used", Float)
-        check_column(self, User, "session_id", String)
+        check_column(self, User, "token", String)
         check_column(self, User, "created_at", DateTime)
     
     def test_primary_key(self):
