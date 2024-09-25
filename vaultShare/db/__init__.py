@@ -1,1 +1,1 @@
-from .db import DB, UserDB
+from .db import DB, UserDB, WorkspaceDB
