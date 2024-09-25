@@ -16,9 +16,8 @@ from sqlalchemy import Integer, Boolean, DateTime, String, Float, UniqueConstrai
 from typing import Dict, Union
 
 EXPECTED_USER_COLUMNS = [
-    "id", "username", "hashed_password", "role",
-    "memory_allocated", "memory_used", "created_at",
-    "session_id", "email"
+    "id", "email", "username", "hashed_password", "role",
+    "memory_allocated", "memory_used", "session_id", "created_at",
 ]
 EXPECTED_WORKSPACE_COLUMNS = [
     "id", "name", "admin_id", "total_memory",
@@ -103,18 +102,23 @@ class TestUserSchema(unittest.TestCase):
     def test_table_attributes(self):
         check_column(self, User, 'id', String, nullable=False)
         check_column(self, User, 'username', String, nullable=False, length=None)
+        check_column(self, User, "email", String, nullable=False)
         check_column(self, User, 'hashed_password', String, nullable=False, length=None)
         check_column(self, User, 'role', String, nullable=False)
         check_column(self, User, 'memory_allocated', Float)
         check_column(self, User, "memory_used", Float)
+        check_column(self, User, "session_id", String)
         check_column(self, User, "created_at", DateTime)
     
     def test_primary_key(self):
         verify_primary_keys(self, User, "id")
 
     def test_unique_columns(self):
-        unique_col = UniqueConstraint(User.__table__.columns["username"])
-        self.assertIn(unique_col, User.__table__.constraints)
+        unique_col_id = UniqueConstraint(User.__table__.columns["id"])
+        unique_col_email = UniqueConstraint(User.__table__.columns["email"])
+        
+        self.assertIn(unique_col_id, User.__table__.constraints)
+        self.assertIn(unique_col_email, User.__table__.constraints)
 
 
 class TestWorkspaceSchema(unittest.TestCase):
