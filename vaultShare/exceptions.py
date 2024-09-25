@@ -9,6 +9,16 @@ class MissingFieldError(ValueError):
         self.msg = msg
 
 
+class InvalidFieldType(ValueError):
+    """
+    Raises error when data passed in the form-data field is not accepted by
+    database schema datatype outlined.
+    """
+    msg = ""
+    def __init__(self, msg):
+        self.msg = msg
+
+
 class UserAlreadyExists(ValueError):
     """
     Raises error when a registered user already has the given
