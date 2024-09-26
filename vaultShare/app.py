@@ -3,6 +3,7 @@ VaultShare Flask app module.
 """
 import os
 from .auth.auth import Auth
+from .exceptions import MissingFieldError, InvalidFieldType, UserAlreadyExists
 from flask import (
     Flask,
     jsonify,
@@ -11,7 +12,8 @@ from flask import (
     redirect,
     abort
 )
-from vaultShare.auth import Auth
+from pathvalidate import is_valid_filename
+
 
 auth = Auth()
 app = Flask(__name__)
@@ -30,11 +32,11 @@ def index():
         Returns:
             response: {"message": <content>}
     """
-    payload = {"message": "Welcome"}
+    payload = {"message": "Welcome to VaultShare"}
     return jsonify(payload)
 
 @app.route("/signup", methods=['POST'], strict_slashes=False)
-def login():
+def register():
     """
     Handles user account creation.
     """
@@ -45,15 +47,26 @@ def login():
     password = request.form.get("password")
     
     if not username:
-        # abort(400, description=f"Fill in your username")
         raise MissingFieldError("Fill in your <username>")
     
     if not email:
-        abort(400, description=f"Fill in your <email>")
+        raise MissingFieldError("Fill in your <email>")
         
     if not password:
-        abort(400, description=f"Fill in your <password>")
-        
+        raise MissingFieldError("Fill in your <password>")
+    
+    if type(username) is not str:
+        raise InvalidFieldType(f"Invalid username <{username}> passed, username must be text")
+    
+    if type(email) is not str:
+        raise InvalidFieldType(f"Invalid email <{email}> passed, email must be text")
+
+    if type(password) is not str:
+        raise InvalidFieldType(f"Invalid password <{password}> passed, password must be text")
+    
+    if not is_valid_filename(username):
+        raise InvalidFieldType(f"Username <{username}> can't be use as workspace folder name")
+    
     try:
         user = auth.register_user(username, email, password)
         payload = {
@@ -64,19 +77,58 @@ def login():
                 "role": user.role,
                 "created_at": user.created_at
             },
-            "next_action": ["login", "create_workspace", "join_workspace"]
+            "recommended_actions": ["login", "create_workspace", "join_workspace"]
         }
-        return jsonify(payload), 200
-    
+        return jsonify(payload), 201
     except ValueError as e:
-        abort(400)
-
+        raise UserAlreadyExists(e.args[0])
+    
+@app.route("/login", methods=["POST"], strict_slashes=False)
+def login():
+    """
+    Handles user account login.
+    """
+    username = request.form.get("username")
+    email = request.form.get("email")
+    password = request.form.get("password")
+    
+    if not password:
+        raise MissingFieldError("Fill in your <password>")
+    
+    if email and not username:
+        try:
+            user = auth.valid_login(password, email=email)
+        except ValueError as e:
+            raise InvalidFeildType(e.args[0])
+    elif username and not email:
+        try:
+            user = auth.valid_login(password, username=username)
+        except ValueError as e:
+            raise InvalidFieldType(e.args[0])
+    else:
+        raise MissingFieldError("Enter a valid <email> or <username> to login")
+    
+    payload = {
+        "message": f"Welcome back {user.username} to VaultShare",
+        "session_id": user.session_id,
+        "recommend_actions": ["checkNotification", "creatWorkspace", "joinWorkspace"]
+    }
+    return jsonify(payload), 200
+   
 @app.errorhandler(MissingFieldError)
 def missing_field(e):
-    print(f"{e=}")
     error = {"error": e.msg}
     return jsonify(error), 402
 
-    
+@app.errorhandler(InvalidFieldType)
+def missing_field(e):
+    error = {"error": e.msg}
+    return jsonify(error), 422
+
+@app.errorhandler(ValueError)
+def missing_field(e):
+    error = {"error": e.msg}
+    return jsonify(error), 400
+   
 def run_app():
     app.run(host="0.0.0.0", port="5000", debug=True)
