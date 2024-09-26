@@ -95,3 +95,14 @@ class Auth:
             raise ValueError("Enter a valid <password>")
         
         return user
+    
+    def find_user_by_sessionid(self, session_id: str) -> User:
+        """
+        Finds user using the sessionid passed.
+        """
+        try:
+            user = self._userdb.find_user(session_id=session_id)
+        except NoResultFound:
+            user = None
+            
+        return user
