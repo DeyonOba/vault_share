@@ -1,5 +1,8 @@
 # Project Name: VaultShare
 ***
+- [api-documenataion](https://github.com/DeyonOba/vault_share/blob/main/vaultshare_api_documentation.md)
+- [db-documentation](https://github.com/DeyonOba/vault_share/edit/main/vaultShare/db/README.md)
+  
 ## Description:
 
 **VaultShare** is a secure file management API service designed for collaborative workspaces. Users can create accounts and set up personalized workspaces to manage files and collaborate with other registered users. Each user can create a maximum of two workspaces and becomes the admin of any workspace they create. The workspace allows up to 5 users, including the admin, and has a total storage limit of 10 MB. VaultShare includes a permission-based file management system, where the admin can manage all user files, and users can manage their files within the workspace.
