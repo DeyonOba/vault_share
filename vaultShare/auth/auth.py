@@ -5,7 +5,6 @@ from .auth_utils import _generate_uuid, verify_password, _hash_password
 from vaultShare.db import DB, UserDB, WorkspaceDB
 from vaultShare.db.models import User
 from sqlalchemy.exc import NoResultFound
-from ..exceptions import UserAlreadyExists
 
 
 class Auth:
@@ -48,7 +47,7 @@ class Auth:
             user = None
             
         if user:
-            raise UserAlreadyExists(f"User email '{email}' already exists")
+            raise ValueError(f"User email '{email}' already exists")
         
         id_ = _generate_uuid()
         hashed_password = _hash_password(password)
@@ -59,4 +58,40 @@ class Auth:
             email=email,
             password=hashed_password
         )
+        return user
+
+    def valid_login(self, password: str, username: str=None, email: str=None) -> User:
+        """
+        Finds user in the database using either the email or username, then
+        checks if the hashed password is a match with the given password.
+        
+        Args:
+            password (str): User password
+            email (str): User email. Optional
+            username (str): Username. Optional
+        
+        Return:
+            user (User): User object of verified user.
+            
+        Raises:
+            ValueError: If username or email is not found, or if the password
+            is not a match
+        """
+        if email and not username:
+            try:
+                user = self._userdb.find_user(email=email)
+                self._userdb.update_user({"email": email}, session_id=_generate_uuid())
+            except NoResultFound:
+                raise ValueError("Enter a registered <email>")
+            
+        elif username and not email:
+            try:
+                user = self._userdb.find_user(username=username)
+                self._userdb.update_user({"username": username}, session_id=_generate_uuid())
+            except NoResultFound:
+                raise ValueError("Enter a registered <username>")
+            
+        if not verify_password(password, user.hashed_password):
+            raise ValueError("Enter a valid <password>")
+        
         return user
