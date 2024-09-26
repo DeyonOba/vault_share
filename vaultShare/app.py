@@ -130,7 +130,37 @@ def login():
         "recommend_actions": ["checkNotification", "creatWorkspace", "joinWorkspace"]
     }
     return jsonify(payload), 200
-   
+
+@app.route("/logout", methods=['DELETE'], strict_slashes=False)
+def logout():
+    """
+    Endpoint handles user loggout.
+    
+    Request: DELETE "/sessions"
+
+    Find the user with the requested session ID. If the user exists
+    destroy the session and redirect the user to "GET '/'".
+    If the user does not exist respond with a 403 HTTP status.
+    """
+    session_id = request.cookies.get("session_id")
+    
+    if not session_id:
+        abort(403)
+        
+    user = auth.find_user_by_sessionid(session_id=session_id)
+
+    if not user:
+        abort(403)
+
+    if not auth.destroy_session(user.session_id):
+        abort(422)
+    return redirect("/")
+
+@app.errorhandler(403)
+def unauthorized_access(e):
+    error = {"error": "Unauthorized access"}
+    return jsonify(error), 403
+  
 @app.errorhandler(MissingFieldError)
 def missing_field(e):
     error = {"error": e.msg}
