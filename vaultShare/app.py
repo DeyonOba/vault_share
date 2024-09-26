@@ -35,6 +35,13 @@ def index():
     payload = {"message": "Welcome to VaultShare"}
     return jsonify(payload)
 
+@app.route("/status", methods=['GET'], strict_slashes=False)
+def status():
+    """
+    Status endpoint.
+    """
+    return jsonify({"status": "OK"}), 200
+
 @app.route("/signup", methods=['POST'], strict_slashes=False)
 def register():
     """
@@ -88,6 +95,15 @@ def login():
     """
     Handles user account login.
     """
+    user = None
+    session_id = request.cookies.get("session_id")
+    
+    if session_id:
+        user = auth.find_user_by_sessionid(session_id)
+        
+    if user:
+        return jsonify({"message": "You have already logged in"}), 200
+    
     username = request.form.get("username")
     email = request.form.get("email")
     password = request.form.get("password")
