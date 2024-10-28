@@ -13,11 +13,11 @@ from flask import (
     abort
 )
 from pathvalidate import is_valid_filename
-
+from .routes.users import users_bp
 
 auth = Auth()
 app = Flask(__name__)
-        
+app.register_blueprint(users_bp, url_prefix="/users")       
 
 @app.route("/", methods=['GET'], strict_slashes=False)
 def index():
@@ -115,7 +115,7 @@ def login():
         try:
             user = auth.valid_login(password, email=email)
         except ValueError as e:
-            raise InvalidFeildType(e.args[0])
+            raise InvalidFieldType(e.args[0])
     elif username and not email:
         try:
             user = auth.valid_login(password, username=username)
