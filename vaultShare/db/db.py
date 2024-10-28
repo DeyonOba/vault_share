@@ -114,6 +114,30 @@ class DB:
         
         return obj
     
+    def retrieve_all(self, model, limit=None):
+        """
+        Retrieves all or a specified number of entry for the specified model passed.
+        
+        Args:
+            model: Valid table schema class from db.models
+            limit (int): Number of entries to be retrieved, Default to None for all entries
+            kwargs: Filter cirteron
+            
+        Returns:
+            objs (list): A list of model objects.
+            
+        Raises:
+            NoResultFound: When no entry satisfies the filter cirteron, or list is empty
+        """
+        if limit:
+            objs = self._session.query(model).limit(limit)
+        else:
+            objs = self._session.query(model).all()
+            
+        if not objs:
+            raise NoResultFound
+        return objs
+    
     def update(self, model, update_filter: dict, **kwargs) -> int:
         """
         Filters records using the update_filter and then update the records based on
@@ -174,10 +198,12 @@ class UserDB(DB):
         user = self.retrieve(User, **kwargs)
         return user
     
+    def find_all_users(self, limit=None) -> list[User]:
+        return self.retrieve_all(User, limit=limit)
+    
     def update_user(self, update_filter, **kwargs) -> int:
         self.validate_attr(User, update_filter, self.EXCLUDE_UPDATE_ATTR)
         self.validate_attr(User, kwargs, self.EXCLUDE_UPDATE_ATTR)
-
         num_of_updates = self.update(User, update_filter, **kwargs)
         return num_of_updates
     
