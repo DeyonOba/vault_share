@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
 from vaultShare.db import UserDB
+from vaultShare.exceptions import NoUserFound
+from sqlalchemy.exc import NoResultFound
 
 user_db = UserDB()
 # Create a user route blueprint
@@ -27,6 +29,10 @@ def app_users_details():
 
 @users_bp.route('/<username>', methods=['GET'])
 def app_user_detail(username: str):
+    try:
+        user = process_user_details(user_db.find_user(username=username))
+    except NoResultFound:
+        raise NoUserFound(f"No user {username} found.")
     return process_user_details(user_db.find_user(username=username))
 
 
