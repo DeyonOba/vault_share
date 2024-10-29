@@ -3,7 +3,10 @@ VaultShare Flask app module.
 """
 import os
 from .auth.auth import Auth
-from .exceptions import MissingFieldError, InvalidFieldType, UserAlreadyExists
+from .exceptions import (
+    MissingFieldError, InvalidFieldType,
+    UserAlreadyExists, NoUserFound
+)
 from flask import (
     Flask,
     jsonify,
@@ -170,6 +173,11 @@ def missing_field(e):
 def missing_field(e):
     error = {"error": e.msg}
     return jsonify(error), 422
+
+@app.errorhandler(NoUserFound)
+def no_user_found(e):
+    error = {'error': e.msg}
+    return jsonify(error), 400
 
 @app.errorhandler(ValueError)
 def missing_field(e):
