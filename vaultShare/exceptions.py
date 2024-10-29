@@ -27,3 +27,8 @@ class UserAlreadyExists(ValueError):
     msg = ""
     def __init__(self, msg):
         self.msg = msg
+        
+class NoUserFound(ValueError):
+    msg=""
+    def __init__(self, msg):
+        self.msg = msg
